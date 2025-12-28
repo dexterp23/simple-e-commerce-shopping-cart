@@ -35,5 +35,15 @@ services:
     depends_on:
       - app
 
+  node:
+    image: node:20
+    container_name: simple-e-commerce-shopping-cart-node
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
+
 volumes:
   pgdata:

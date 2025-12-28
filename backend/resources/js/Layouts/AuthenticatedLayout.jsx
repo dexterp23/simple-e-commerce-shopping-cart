@@ -19,22 +19,46 @@ export default function AuthenticatedLayout({ header, children }) {
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800"/>
                                 </Link>
                             </div>
 
+                            {user && (
+                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                    <NavLink
+                                        href={route('dashboard')}
+                                        active={route().current('dashboard')}
+                                    >
+                                        Dashboard
+                                    </NavLink>
+                                </div>
+                                )}
+
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
+                                    href={route('products')}
+                                    active={route().current('products')}
                                 >
-                                    Dashboard
+                                    Products
                                 </NavLink>
                             </div>
+
+                            {user && (
+                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                    <NavLink
+                                        href={route('cart')}
+                                        active={route().current('cart')}
+                                    >
+                                        Cart
+                                    </NavLink>
+                                </div>
+                            )}
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
                             <div className="relative ms-3">
+
+                                {user ? (
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -75,6 +99,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
+                                    ) : (
+                                    <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                        <NavLink
+                                            href={route('login')}
+                                        >
+                                            Log in
+                                        </NavLink>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -128,15 +161,34 @@ export default function AuthenticatedLayout({ header, children }) {
                     }
                 >
                     <div className="space-y-1 pb-3 pt-2">
+                        {user && (
+                            <ResponsiveNavLink
+                                href={route('dashboard')}
+                                active={route().current('dashboard')}
+                            >
+                                Dashboard
+                            </ResponsiveNavLink>
+                            )}
                         <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
+                            href={route('products')}
+                            active={route().current('products')}
                         >
-                            Dashboard
+                            Products
                         </ResponsiveNavLink>
+
+                        {user && (
+                            <ResponsiveNavLink
+                                href={route('cart')}
+                                active={route().current('cart')}
+                            >
+                                Cart
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
+                    {user ? (
                     <div className="border-t border-gray-200 pb-1 pt-4">
+
                         <div className="px-4">
                             <div className="text-base font-medium text-gray-800">
                                 {user.name}
@@ -158,14 +210,24 @@ export default function AuthenticatedLayout({ header, children }) {
                                 Log Out
                             </ResponsiveNavLink>
                         </div>
+
                     </div>
+                        ) : (
+                        <div className="border-t border-gray-200 pb-1 pt-4">
+                            <div className="mt-3 space-y-1">
+                                <ResponsiveNavLink href={route('login')}>
+                                    Log in
+                                </ResponsiveNavLink>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </nav>
 
             {header && (
                 <header className="bg-white shadow">
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {header}
+                    {header}
                     </div>
                 </header>
             )}
