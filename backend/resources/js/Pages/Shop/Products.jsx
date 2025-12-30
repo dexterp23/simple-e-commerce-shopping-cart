@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import {Head, usePage} from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
+import NavLink from "@/Components/NavLink.jsx";
+import toast, {Toaster} from "react-hot-toast";
+import AddToCartForm from "@/Components/AddToCartForm.jsx";
 
-export default function Products({ products, filters  }) {
+export default function Products({ flash, products, filters  }) {
+    const user = usePage().props.auth.user;
     const [filter_name, setSearch] = useState(filters.filter_name || '');
 
     const handlePageChange = (page) => {
@@ -15,6 +19,22 @@ export default function Products({ products, filters  }) {
         Inertia.get('/products', { filter_name }, { preserveState: true, replace: true });
     };
 
+    useEffect(() => {
+        Object.entries(flash).forEach(([type, message]) => {
+            if (!message) return;
+            switch (type) {
+                case 'success':
+                    toast.success(message);
+                    break;
+                case 'error':
+                    toast.error(message);
+                    break;
+                default:
+                    toast(message);
+            }
+        });
+    }, [flash]);
+
     return (
         <AuthenticatedLayout
             header={
@@ -24,6 +44,8 @@ export default function Products({ products, filters  }) {
             }
         >
             <Head title="Products"/>
+
+            <Toaster position="top-right" reverseOrder={false} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -69,15 +91,16 @@ export default function Products({ products, filters  }) {
                                          </td>
                                          <td className="border border-gray-300 px-4 py-2">
                                              {product.stock_quantity > 0 && (
-                                                 <form method="POST" action={route('cart.add')}>
-                                                     <input type="hidden" name="_token"
-                                                            value={document.querySelector('meta[name="csrf-token"]').content}/>
-                                                     <input type="hidden" name="product_id" value={product.id}/>
-                                                     <button type="submit"
-                                                             className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">
-                                                         Add to Cart
-                                                     </button>
-                                                 </form>
+                                                 user ? (
+                                                         <AddToCartForm item={product} />
+                                                 ) : (
+                                                     <NavLink
+                                                         href={route('login')}
+                                                         className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                                                         >
+                                                             Login to Add to Cart
+                                                         </NavLink>
+                                                     )
                                              )}
                                          </td>
                                      </tr>

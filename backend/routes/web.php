@@ -22,7 +22,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/add/{product_id}', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/update/{product_id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove');
 });
 
 require __DIR__.'/auth.php';

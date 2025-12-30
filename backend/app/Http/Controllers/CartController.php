@@ -2,25 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\ProductRepository;
+use App\Repositories\CartRepository;
+use App\Services\Shop\CartServiceInterface;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use \Symfony\Component\HttpFoundation\Response;
 
 class CartController extends Controller
 {
-    protected ProductRepository $productRepository;
+    protected CartRepository $cartRepository;
+    protected CartServiceInterface $cartService;
 
-    public function __construct(ProductRepository $productRepository)
+    public function __construct(CartRepository $cartRepository)
     {
-
-        $this->productRepository = $productRepository;
+        $this->cartRepository = $cartRepository;
+        $this->cartService = app('CartService');
     }
 
-    public function index(Request $request)
+    public function index(): \Inertia\Response
     {
-        $filters = $request->all();
-        $products = $this->productRepository->getAllPaginated($filters);
+        $cart = $this->cartService->getCart();
+        $cart = $this->cartRepository->getById($cart->id);
 
         return Inertia::render('Shop/Cart', [
             'flash' => [
@@ -28,19 +31,54 @@ class CartController extends Controller
                 'error' => Session::get('error'),
                 'info' => Session::get('info')
             ],
-            'products' => $products,
-            'filters' => $filters
+            'products' => $cart->products ?? [],
+            'total' => $cart->total ?? 0,
+            'actions' => $cart->actions ?? [],
         ]);
     }
 
-    public function add(Request $request)
+    public function add(Request $request, int $productId): Response
     {
-        $productId = $request->get('product_id');
+        return $this->handleCartAction($request, $productId, 'add');
+    }
 
-        \Log::info($productId);
+    public function update(Request $request, int $productId): Response
+    {
+        return $this->handleCartAction($request, $productId, 'update');
+    }
 
-        session()->flash('success', __('Successfully added.'));
-        session()->flash('error', __('Error Message.'));
-        return Inertia::location(route('cart'));
+    protected function handleCartAction(Request $request, int $productId, string $action): Response
+    {
+        try {
+            $validated = $request->validate([
+                'quantity' => ['required', 'integer', 'min:1'],
+            ]);
+
+            $quantity = $validated['quantity'];
+
+            match ($action) {
+                'add' => $this->cartService->add($productId, $quantity),
+                'update' => $this->cartService->update($productId, $quantity),
+                default => throw new \InvalidArgumentException('Invalid cart action'),
+            };
+
+            session()->flash('success', __($action === 'add' ? 'Successfully added.' : 'Successfully updated.'));
+            return Inertia::location(route('cart'));
+        } catch (\Exception $exception) {
+            session()->flash('error', __($exception->getMessage()));
+            return redirect()->back();
+        }
+    }
+
+    public function remove(int $productId): Response
+    {
+        try {
+            $this->cartService->remove($productId);
+            session()->flash('success', __('Successfully removed.'));
+            return Inertia::location(route('cart'));
+        } catch (\Exception $exception) {
+            session()->flash('error', __($exception->getMessage()));
+            return redirect()->back();
+        }
     }
 }

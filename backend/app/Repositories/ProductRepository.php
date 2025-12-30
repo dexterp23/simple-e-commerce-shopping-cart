@@ -13,6 +13,12 @@ class ProductRepository
     {
         $this->model = $model;
     }
+
+    public function getById(int $productId): Product
+    {
+        return $this->model->where('id', $productId)->first();
+    }
+
     public function getAllPaginated(array $filters): LengthAwarePaginator
     {
         $query = $this->model
