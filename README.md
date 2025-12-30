@@ -1,3 +1,47 @@
+# Project Overview
+**Simple E-commerce Shopping Cart** is a Laravel-based web application that provides core 
+shopping cart functionality for an e-commerce system.
+
+The application allows users to browse available products, add them to a personal 
+shopping cart, update product quantities, and remove items from the cart. Each product contains essential attributes such as name, price, and stock quantity.
+
+### User Authentication & Cart Management
+- Every shopping cart is linked to an authenticated user using Laravel’s built-in 
+authentication system.
+
+- Cart operations (adding products, updating quantities, and removing items) are 
+persisted in the database and are always retrieved based on the currently authenticated user.
+
+- No session storage or local storage is used for cart data — all cart state is 
+managed server-side following Laravel best practices.
+
+### Key Features
+- Product catalog with name, price, and stock quantity
+- User authentication using Laravel starter kits
+- Persistent shopping cart per authenticated user
+- Add, update, and remove cart items
+- Stock quantity validation
+
+### Notifications & Scheduled Jobs
+- **Low Stock Notification**
+When a product’s stock quantity falls below a defined threshold, a Laravel Job / Queue 
+is triggered to send an email notification to a admin user.
+
+- **Daily Sales Report**
+A scheduled cron job runs every evening and sends a report containing all products sold 
+during the current day to the email address of the admin user.
+
+These background processes are implemented using Laravel’s Queue and Scheduler systems.
+
+### Technology Stack
+- Laravel 12
+- Laravel Starter Kit (React)
+- Queues & Jobs
+- Laravel Scheduler (Cron Jobs)
+- PostgreSQL
+- Docker (for local development)
+
+
 # Project Setup Guide
 This project uses Docker and Laravel. Follow the steps below to set up and run the application locally.
 
