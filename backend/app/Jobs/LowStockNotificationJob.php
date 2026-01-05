@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Services\Notifications\LowStockNotificationServiceInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -26,8 +27,8 @@ class LowStockNotificationJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(LowStockNotificationServiceInterface $lowStockNotificationService): void
     {
-        app('LowStockNotificationService')->handle($this->productId);
+        $lowStockNotificationService->handle($this->productId);
     }
 }

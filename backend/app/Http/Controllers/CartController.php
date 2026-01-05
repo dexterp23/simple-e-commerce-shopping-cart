@@ -14,10 +14,13 @@ class CartController extends Controller
     protected CartRepository $cartRepository;
     protected CartServiceInterface $cartService;
 
-    public function __construct(CartRepository $cartRepository)
+    public function __construct(
+        CartRepository $cartRepository,
+        CartServiceInterface $cartService
+    )
     {
         $this->cartRepository = $cartRepository;
-        $this->cartService = app('CartService');
+        $this->cartService = $cartService;
     }
 
     public function index(): \Inertia\Response

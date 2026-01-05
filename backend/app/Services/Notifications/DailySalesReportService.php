@@ -7,7 +7,7 @@ use App\Repositories\CartRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Mail;
 
-class DailySalesReportService
+class DailySalesReportService implements DailySalesReportServiceInterface
 {
     protected UserRepository $userRepository;
     protected CartRepository $cartRepository;

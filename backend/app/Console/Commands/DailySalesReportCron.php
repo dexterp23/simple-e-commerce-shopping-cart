@@ -2,10 +2,21 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Notifications\DailySalesReportServiceInterface;
 use Illuminate\Console\Command;
 
 class DailySalesReportCron extends Command
 {
+    protected DailySalesReportServiceInterface $dailySalesReportService;
+
+    public function __construct(
+        DailySalesReportServiceInterface $dailySalesReportService,
+    )
+    {
+        parent::__construct();
+        $this->dailySalesReportService = $dailySalesReportService;
+    }
+
     /**
      * The name and signature of the console command.
      *
@@ -25,7 +36,7 @@ class DailySalesReportCron extends Command
      */
     public function handle()
     {
-        app('DailySalesReportService')->handle();
+        $this->dailySalesReportService->handle();
         return Command::SUCCESS;
     }
 }
