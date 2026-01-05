@@ -7,16 +7,6 @@ use Illuminate\Console\Command;
 
 class DailySalesReportCron extends Command
 {
-    protected DailySalesReportServiceInterface $dailySalesReportService;
-
-    public function __construct(
-        DailySalesReportServiceInterface $dailySalesReportService,
-    )
-    {
-        parent::__construct();
-        $this->dailySalesReportService = $dailySalesReportService;
-    }
-
     /**
      * The name and signature of the console command.
      *
@@ -30,6 +20,16 @@ class DailySalesReportCron extends Command
      * @var string
      */
     protected $description = 'Command description';
+
+    protected DailySalesReportServiceInterface $dailySalesReportService;
+
+    public function __construct(
+        DailySalesReportServiceInterface $dailySalesReportService,
+    )
+    {
+        parent::__construct();
+        $this->dailySalesReportService = $dailySalesReportService;
+    }
 
     /**
      * Execute the console command.
